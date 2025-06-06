@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>地理圖表API服務</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        ul {
+            background-color: #f8f9fa;
+            padding: 15px 15px 15px 40px;
+            border-radius: 5px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>地理圖表API服務</h1>
+    <div class="success">
+        <strong>連接成功！</strong> 服務運行正常。
+    </div>
+    <p>這個API提供了以下端點用於生成地理圖表：</p>
+    <ul>
+        <li><code>GET /boundary</code> - 繪製地圖邊界</li>
+        <li><code>GET /boundary_with_subsidy</code> - 繪製帶補助地區顏色的地圖邊界</li>
+        <li><code>POST /choropleth</code> - 繪製分層設色圖（等值區域圖）</li>
+        <li><code>POST /dot</code> - 繪製點散布圖</li>
+        <li><code>POST /hist2d</code> - 繪製2D直方圖</li>
+        <li><code>POST /bubble</code> - 繪製氣泡圖</li>
+    </ul>
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h3 style="color: #1565c0; margin-top: 0;">最新更新</h3>
+        <p style="margin-bottom: 0;">本API已更新為使用物件化參數，提供更好的類型安全性和參數組織。所有繪圖方法現在使用專門的參數物件來傳遞配置。</p>
+    </div>
+    <p>您可以通過訪問 <a href="/docs">API文檔</a> 了解更多詳情並測試API。</p>
+    <p>直接訪問測試：<a href="/boundary">顯示邊界圖</a></p>
+</body>
+</html>
