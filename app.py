@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 from src.graph import Graph, ChoroplethParams, Hist2DParams, DotParams, BubbleParams
@@ -33,6 +34,9 @@ app = FastAPI(
     description="使用FastAPI提供地理資料視覺化服務",
     lifespan=lifespan,
 )
+
+# 添加靜態文件服務
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 建立基礎Graph實例
 graph_instance = Graph()
@@ -270,4 +274,4 @@ async def manual_cleanup():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=5011)
+    uvicorn.run(app, host="0.0.0.0", port=5010)
