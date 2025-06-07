@@ -160,10 +160,10 @@ async def get_boundary():
 
 
 # 基礎地圖邊界端點+補助地區顏色
-@app.get("/boundary_with_subsidy", summary="獲取帶補助地區顏色的地圖邊界")
-async def get_boundary_with_subsidy():
+@app.get("/subsidy_boundary", summary="獲取帶補助地區顏色的地圖邊界")
+async def get_subsidy_boundary():
     """返回帶補助地區顏色的地圖邊界圖"""
-    return handle_plot_request(graph_instance.plot_boundary_with_subsidy)
+    return handle_plot_request(graph_instance.plot_subsidy_boundary)
 
 
 # 分層設色圖端點

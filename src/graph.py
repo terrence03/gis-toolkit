@@ -1,3 +1,4 @@
+# %%
 import json
 from typing import List, Union
 import pandas as pd
@@ -13,6 +14,13 @@ from src.config import FigConfig, Font, Shapefile
 
 # 設置matplotlib的記憶體管理參數
 plt.rcParams["figure.max_open_warning"] = 0  # 關閉過多圖表的警告
+
+
+@dataclass
+class SubsidyBoundaryParams:
+    """補助區域邊界參數物件"""
+
+    type: int  # 1: 受補助地區分為4類, 2: 受補助地區分為5類(平地原民區再分為2類)
 
 
 @dataclass
@@ -129,7 +137,9 @@ class Graph:
 
         return fig, ax
 
-    def plot_boundary_with_subsidy(self) -> tuple[plt.Figure, plt.Axes]:
+    def plot_subsidy_boundary(
+        self, params: SubsidyBoundaryParams
+    ) -> tuple[plt.Figure, plt.Axes]:
         """
         Plot the boundary of the given area with mark subsidy area.
 
@@ -140,14 +150,25 @@ class Graph:
         """
         area_list = self.geo_plot.area_list
         area_range = self.fig_config.AREA_RANGE
-        with open("res/json/town_type_by_town.json", "r", encoding="utf-8") as f:
-            town_type = json.load(f)
-        colormap = {
-            "山地原民區": "#477160",
-            "平地原民區": "#A8D8B9",
-            "偏遠地區": "#FFC145",
-            "離島地區": "#90C2E7",
-        }
+        if params.type == 1:
+            with open("res/json/town_type_by_town.json", "r", encoding="utf-8") as f:
+                town_type = json.load(f)
+                colormap = {
+                    "山地原民區": "#477160",
+                    "平地原民區": "#A8D8B9",
+                    "偏遠地區": "#FFC145",
+                    "離島地區": "#90C2E7",
+                }
+        elif params.type == 2:
+            with open("res/json/town_type_sp6.json", "r", encoding="utf-8") as f:
+                town_type = json.load(f)
+                colormap = {
+                    "山地原民區": "#477160",
+                    "平地原民區": "#A8D8B9",
+                    "平地原民區(6)": "#42AB9E",
+                    "偏遠地區": "#FFC145",
+                    "離島地區": "#90C2E7",
+                }
 
         fig, ax = self.geo_plot.base()
         for i, a in area_list:
@@ -166,26 +187,50 @@ class Graph:
             town_gdf["color"] = town_gdf["town_type"].map(
                 lambda x: colormap.get(x, "#ffffff00")
             )
-            county_gdf.boundary.plot(ax=ax.child_axes[i], color="black", linewidth=0.8)
-            town_gdf.boundary.plot(ax=ax.child_axes[i], color="gray", linewidth=0.5)
-            town_gdf.plot(ax=ax.child_axes[i], color=town_gdf["color"])
+            county_gdf.boundary.plot(
+                ax=ax.child_axes[i], color="black", linewidth=0.8, zorder=3
+            )
+            town_gdf.boundary.plot(
+                ax=ax.child_axes[i], color="gray", linewidth=0.5, zorder=1
+            )
+            town_gdf.plot(ax=ax.child_axes[i], color=town_gdf["color"], zorder=2)
 
-        ax.legend(
-            handles=[
-                plt.Rectangle((0, 0), 1, 1, color="#477160", label="山地原民區"),
-                plt.Rectangle((0, 0), 1, 1, color="#7FB685", label="平地原民區"),
-                plt.Rectangle((0, 0), 1, 1, color="#FFC145", label="偏遠地區"),
-                plt.Rectangle((0, 0), 1, 1, color="#90C2E7", label="離島地區"),
-            ],
-            labels=[
-                "山地原民區",
-                "平地原民區",
-                "偏遠地區",
-                "離島地區",
-            ],
-            prop={"family": "Noto Serif TC", "size": 14},
-            loc="lower right",
-        )
+        if params.type == 1:
+            ax.legend(
+                handles=[
+                    plt.Rectangle((0, 0), 1, 1, color="#477160", label="山地原民區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#7FB685", label="平地原民區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#FFC145", label="偏遠地區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#90C2E7", label="離島地區"),
+                ],
+                labels=[
+                    "山地原民區",
+                    "平地原民區",
+                    "偏遠地區",
+                    "離島地區",
+                ],
+                prop={"family": "Noto Serif TC", "size": 14},
+                loc="lower right",
+            )
+        elif params.type == 2:
+            ax.legend(
+                handles=[
+                    plt.Rectangle((0, 0), 1, 1, color="#477160", label="山地原民區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#A8D8B9", label="平地原民區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#42AB9E", label="平地原民區(6)"),
+                    plt.Rectangle((0, 0), 1, 1, color="#FFC145", label="偏遠地區"),
+                    plt.Rectangle((0, 0), 1, 1, color="#90C2E7", label="離島地區"),
+                ],
+                labels=[
+                    "山地原民區",
+                    "平地原民區",
+                    "平地原民區(6)",
+                    "偏遠地區",
+                    "離島地區",
+                ],
+                prop={"family": "Noto Serif TC", "size": 14},
+                loc="lower right",
+            )
         return fig, ax
 
     def plot_choropleth(self, params: ChoroplethParams) -> tuple[plt.Figure, plt.Axes]:
@@ -375,3 +420,6 @@ class Graph:
             import gc
 
             gc.collect()
+
+
+# %%
