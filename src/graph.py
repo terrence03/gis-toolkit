@@ -248,6 +248,10 @@ class Graph:
         """
         area_list = self.geo_plot.area_list
         area_range = self.fig_config.AREA_RANGE
+        
+        # 計算全域數值範圍，確保所有子圖使用相同的顏色級距
+        vmin = params.data[params.column].min()
+        vmax = params.data[params.column].max()
 
         fig, ax = self.geo_plot.base()
         for i, a in area_list:
@@ -276,15 +280,16 @@ class Graph:
                     ax=ax.child_axes[i], color="black", linewidth=0.8
                 )
                 continue
-            gdf.plot(ax=ax.child_axes[i], column=params.column, cmap=params.cmap)
+            # 使用全域數值範圍確保所有子圖的顏色級距一致
+            gdf.plot(ax=ax.child_axes[i], column=params.column, cmap=params.cmap, vmin=vmin, vmax=vmax)
 
             county_edge = self.geo_data.get_county_gpd(bbox)
             county_edge.boundary.plot(ax=ax.child_axes[i], color="black", linewidth=0.8)
 
         self._colorbar(
             ax,
-            params.data[params.column].min(),
-            params.data[params.column].max(),
+            vmin,
+            vmax,
             params.cmap,
             params.colorbar_format,
             params.colorbar_tick_visible,
