@@ -1,4 +1,3 @@
-# %%
 import json
 from typing import List, Union
 import pandas as pd
@@ -420,6 +419,3 @@ class Graph:
             import gc
 
             gc.collect()
-
-
-# %%
